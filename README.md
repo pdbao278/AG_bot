@@ -4,15 +4,6 @@ Hệ thống bot Telegram bảo mật cao giúp bạn giám sát và điều khi
 
 ---
 
-> ### 📌 LƯU Ý BẢO MẬT & NGUYÊN TẮC CHIA SẺ (QUAN TRỌNG)
-> 
-> - **TUYỆT ĐỐI KHÔNG commit hoặc gửi file `.env` cho bất kỳ ai!**
-> - **Không chia sẻ**: `TELEGRAM_BOT_TOKEN`, `ALLOWED_USER_IDS` (Telegram ID cá nhân), và mã `SECURITY_PIN`.
-> - Dự án đã cấu hình sẵn file [`.gitignore`](file:///E:/tool/AG/.gitignore) để tự động bỏ qua file `.env`, tệp log và cơ sở dữ liệu.
-> - Khi gửi mã nguồn cho bạn bè hoặc đẩy lên GitHub: **Chỉ gửi code kèm file [`.env.example`](file:///E:/tool/AG/.env.example)**. Người nhận sẽ tự tạo bot riêng và điền thông tin của họ vào file `.env`.
-
----
-
 ## 🚀 Tính năng chính
 
 1. **Điều khiển Antigravity AI từ xa:**
