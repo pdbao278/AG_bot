@@ -229,7 +229,6 @@ async def test_bot_commands_and_suggestions():
     assert "screen" in cmd_dict
     assert "lock" in cmd_dict
     assert "shutdown" in cmd_dict
-    assert "reboot" in cmd_dict
     assert "abort" in cmd_dict
 
     # Test hàm post_init gọi set_my_commands

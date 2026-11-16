@@ -63,7 +63,6 @@ from src.handlers.screen_handler import screen_handler
 from src.handlers.power_handler import (
     lock_handler,
     shutdown_request_handler,
-    reboot_request_handler,
     abort_handler,
     power_callback_handler,
 )
@@ -82,7 +81,6 @@ BOT_COMMANDS = [
     BotCommand("log", "Xem 25 dòng nhật ký log gần nhất (/log file)"),
     BotCommand("lock", "Khóa màn hình máy tính ngay lập tức"),
     BotCommand("shutdown", "Tắt máy tính từ xa (yêu cầu mã PIN)"),
-    BotCommand("reboot", "Khởi động lại máy tính (yêu cầu mã PIN)"),
     BotCommand("abort", "Hủy lệnh tắt máy đang đếm ngược"),
     BotCommand("help", "Xem hướng dẫn chi tiết các lệnh"),
 ]
@@ -133,7 +131,6 @@ def create_bot_application():
     # 4. Các lệnh nguồn máy tính
     application.add_handler(CommandHandler("lock", lock_handler))
     application.add_handler(CommandHandler("shutdown", shutdown_request_handler))
-    application.add_handler(CommandHandler("reboot", reboot_request_handler))
     application.add_handler(CommandHandler("abort", abort_handler))
 
     # 5. Xử lý Callback nút bấm (Inline Keyboard)

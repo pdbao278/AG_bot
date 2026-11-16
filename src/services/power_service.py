@@ -47,17 +47,6 @@ class PowerService:
             return False, f"❌ Không thể khóa màn hình: {e}"
 
     @staticmethod
-    def sleep_system() -> tuple[bool, str]:
-        """Đưa máy tính vào chế độ Sleep (Ngủ)."""
-        try:
-            # Lệnh đưa máy vào trạng thái Standby / Sleep của Windows
-            subprocess.run(["rundll32.exe", "powrprof.dll,SetSuspendState", "0,1,0"], check=True)
-            return True, "🌙 Máy tính đang chuyển vào chế độ Sleep."
-        except Exception as e:
-            logger.error(f"Lỗi khi chuyển sang Sleep: {e}")
-            return False, f"❌ Không thể đưa máy vào chế độ Sleep: {e}"
-
-    @staticmethod
     def shutdown_system(delay_seconds: int = 15) -> tuple[bool, str]:
         """Tắt máy tính (có đếm ngược delay_seconds để kịp hủy nếu bấm nhầm)."""
         try:
@@ -69,22 +58,11 @@ class PowerService:
             return False, f"❌ Lỗi khi thực hiện lệnh tắt máy: {e}"
 
     @staticmethod
-    def reboot_system(delay_seconds: int = 15) -> tuple[bool, str]:
-        """Khởi động lại máy tính (có đếm ngược delay_seconds)."""
-        try:
-            cmd = ["shutdown.exe", "/r", "/t", str(delay_seconds), "/c", "Yeu cau khoi dong lai tu Telegram Bot"]
-            subprocess.run(cmd, check=True)
-            return True, f"🔄 Máy tính sẽ khởi động lại sau {delay_seconds} giây! (Dùng lệnh /abort nếu muốn hủy)."
-        except Exception as e:
-            logger.error(f"Lỗi khi khởi động lại máy: {e}")
-            return False, f"❌ Lỗi khi khởi động lại: {e}"
-
-    @staticmethod
     def abort_shutdown() -> tuple[bool, str]:
-        """Hủy lệnh tắt máy hoặc khởi động lại đang đếm ngược."""
+        """Hủy lệnh tắt máy đang đếm ngược."""
         try:
             subprocess.run(["shutdown.exe", "/a"], check=True)
-            return True, "✅ Đã hủy lệnh tắt / khởi động lại máy tính thành công!"
+            return True, "✅ Đã hủy lệnh tắt máy tính thành công!"
         except Exception as e:
             return False, f"⚠️ Không có lệnh tắt máy nào đang chờ hủy hoặc xảy ra lỗi: {e}"
 

@@ -19,10 +19,8 @@ Hệ thống bot Telegram bảo mật cao giúp bạn giám sát và điều khi
 
 3. **Quản lý nguồn máy tính từ xa:**
    - **Khóa máy (`/lock`):** Khóa màn hình máy tính ngay lập tức.
-   - **Chế độ ngủ (`/sleep`):** Xác nhận 1 chạm trên inline keyboard trước khi đưa máy tính vào Sleep.
    - **Tắt máy (`/shutdown <PIN>`):** Yêu cầu nhập đúng mã PIN bảo mật cá nhân để kích hoạt đếm ngược tắt máy.
-   - **Khởi động lại (`/reboot <PIN>`):** Yêu cầu nhập đúng mã PIN bảo mật.
-   - **Hủy lệnh (`/abort`):** Hủy lệnh tắt máy hoặc khởi động lại nếu đang trong thời gian đếm ngược.
+   - **Hủy lệnh (`/abort`):** Hủy lệnh tắt máy nếu đang trong thời gian đếm ngược.
 
 4. **Bảo mật Zero-Trust:**
    - **Cơ chế Long Polling:** Hoạt động qua kênh bảo mật của Telegram, không cần mở cổng Router (NAT/Port Forwarding), tránh lộ IP gia đình.
@@ -116,9 +114,7 @@ Hiển thị cố định ngay dưới khung chat gồm 8 phím tiện lợi:
 | 📜 Xem Log | `/log` | Xem 25 dòng log mới nhất (hoặc `/log file` để tải toàn bộ file `bot.log`) |
 | 🔒 Khóa máy | `/lock` | Khóa màn hình Windows ngay lập tức (`rundll32 user32.dll,LockWorkStation`) |
 | ⛔ Tắt máy | `/shutdown <PIN>` | Bắt đầu đếm ngược 60 giây tắt máy tính (bắt buộc đúng mã PIN) |
-| - | `/reboot <PIN>` | Khởi động lại máy tính (bắt buộc đúng mã PIN) |
-| - | `/sleep` | Đưa máy tính vào chế độ ngủ (Sleep) an toàn (xác nhận 1 chạm) |
-| - | `/abort` | Hủy lệnh tắt hoặc khởi động lại máy tính đang đếm ngược |
+| - | `/abort` | Hủy lệnh tắt máy tính đang đếm ngược |
 | - | `/help` | Hiển thị bảng tóm tắt hướng dẫn sử dụng chi tiết |
 | - | `/menu` | Mở lại bàn phím điều khiển nhanh nếu bị ẩn |
 

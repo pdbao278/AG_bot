@@ -11,7 +11,7 @@ Hệ thống **AG-Telebot** là một ứng dụng chạy ngầm trên máy tín
 1. **Điều khiển Antigravity**: Gửi câu lệnh / prompt cho Antigravity CLI (`agy.exe`), nhận tiến trình và kết quả trả về ngay trong khung chat Telegram.
 2. **Chụp ảnh màn hình (Screenshot)**: Chụp toàn bộ màn hình desktop hoặc chụp riêng cửa sổ Antigravity/trình duyệt đang mở, gửi ảnh nét cao qua Telegram để giám sát từ xa.
 3. **Quản lý nguồn máy tính (Power Management)**:
-   - *Tắt máy / Khóa máy / Khởi động lại / Sleep*: Thực thi an toàn với xác nhận 2 bước.
+   - *Tắt máy / Khóa máy*: Thực thi an toàn với xác thực mã PIN và cơ chế hủy lệnh kịp thời.
    - *Mở máy*: Cung cấp giải pháp Wake-on-LAN (WoL) và cấu hình AC Recovery qua Smart Plug.
 4. **Bảo mật tối đa (High Security Priority)**:
    - Chống tuyệt đối truy cập trái phép từ người lạ trên Telegram.
@@ -30,8 +30,7 @@ Hệ thống **AG-Telebot** là một ứng dụng chạy ngầm trên máy tín
    - Khi máy tính tắt hẳn (Power Off), phần mềm trên máy không thể hoạt động. Để bật máy từ xa, giải pháp thực tế khả thi là:
      - **Cách 1 (Khuyên dùng)**: Kết hợp Smart Plug (Ổ cắm thông minh Tuya/Sonoff) + Bật tính năng *AC Power Recovery / Restore on AC Power Loss* trong BIOS của bo mạch chủ.
      - **Cách 2**: Wake-on-LAN (WoL) gửi gói Magic Packet từ một thiết bị nội mạng (như Router OpenWrt, Raspberry Pi, hoặc điện thoại kết nối VPN vào mạng nhà).
-     - **Cách 3**: Đưa máy vào chế độ *Sleep (Modern Standby)* thay vì tắt hẳn, cho phép đánh thức qua thiết bị mạng/lịch trình.
-   - Bot trên máy chủ này sẽ chịu trách nhiệm chính về: Tắt máy, Sleep, Khởi động lại, Khóa màn hình và kiểm tra trạng thái hoạt động.
+   - Bot trên máy chủ này sẽ chịu trách nhiệm chính về: Tắt máy (kèm mã PIN), Khóa màn hình và kiểm tra trạng thái hoạt động.
 
 ---
 
@@ -53,7 +52,7 @@ Hệ thống **AG-Telebot** là một ứng dụng chạy ngầm trên máy tín
     ├── (2) Command Router & UI Keyboard
     ├── (3) Antigravity Bridge (Gọi agy.exe CLI / Stream output / Quản lý session)
     ├── (4) Screen Capture Module (Chụp màn hình đa màn hình bằng mss/Pillow)
-    └── (5) System Control Module (Shutdown / Sleep / Lock / Restart)
+    └── (5) System Control Module (Shutdown / Lock / Status)
 ```
 
 ### 3.2. Mô hình Bảo mật Chuyên sâu (Security Architecture)
@@ -64,7 +63,7 @@ Hệ thống **AG-Telebot** là một ứng dụng chạy ngầm trên máy tín
    - File cấu hình chỉ chấp nhận danh sách ID cụ thể (ví dụ: `ALLOWED_USER_IDS=[123456789]`).
    - Mọi tin nhắn hoặc lệnh từ bất kỳ ID nào không nằm trong danh sách sẽ bị **bỏ qua ngay lập tức ở tầng filter**, không phản hồi (Drop silently) để tránh kẻ tấn công biết bot đang hoạt động, đồng thời ghi log cảnh báo về máy tính.
 3. **Xác thực 2 bước (PIN Code Confirmation)**:
-   - Các lệnh nhạy cảm như `/shutdown`, `/reboot`, `/cmd` yêu cầu nhập mã PIN 4-6 số hoặc bấm nút xác nhận Inline Keyboard dùng một lần (One-Time Callback Query).
+   - Các lệnh nhạy cảm như `/shutdown` yêu cầu nhập mã PIN bảo mật.
 4. **Giới hạn tốc độ lệnh (Rate Limiting) & Chống Brute Force**:
    - Giới hạn tối đa 5 yêu cầu/phút đối với các tác vụ nặng (chụp ảnh, gọi AI).
    - Nếu nhập sai PIN 3 lần, tự động khóa tương tác trong 15 phút và gửi cảnh báo về console.
@@ -121,7 +120,7 @@ e:\tool\AG\
 │   │   ├── command_handler.py # Xử lý /start, /menu, /help, /status, /log và Reply Keyboard
 │   │   ├── agy_handler.py     # Nhận prompt, /ask, /new, /model (quota), /cd và tin nhắn tự do
 │   │   ├── screen_handler.py  # Xử lý chụp và gửi ảnh màn hình
-│   │   └── power_handler.py   # Xử lý tắt máy, sleep, restart kèm xác thực PIN và nút hủy
+│   │   └── power_handler.py   # Xử lý tắt máy (kèm mã PIN), khóa màn hình và nút hủy /abort
 │   │
 │   └── services/              # Dịch vụ hệ thống nền tảng
 │       ├── __init__.py
@@ -159,10 +158,8 @@ Hệ thống hỗ trợ cả **giao diện phím bấm nhanh (Reply Keyboard)** 
 | `/model` | ⚙️ Đổi Model (+ Quota) | Mở menu chọn model AI tích hợp đo hạn mức (🟢/🔴 Quota) | Whitelist |
 | `/log` hoặc `/logs` | 📜 Xem Log | Xem 25 dòng log mới nhất hoặc tải toàn bộ file (`/log file`) | Whitelist |
 | `/lock` | 🔒 Khóa máy | Khóa màn hình Windows ngay lập tức (`LockWorkStation`) | Whitelist |
-| `/shutdown [PIN]` | ⛔ Tắt máy | Đếm ngược 60s tắt máy (yêu cầu mã PIN hoặc bấm xác nhận) | **Bắt buộc mã PIN** |
-| `/reboot [PIN]` | 🔄 Khởi động | Khởi động lại máy tính (yêu cầu mã PIN bảo mật) | **Bắt buộc mã PIN** |
-| `/sleep` | - | Đưa máy tính vào chế độ ngủ (Sleep) an toàn | Whitelist + Xác nhận |
-| `/abort` | - | Hủy ngay lệnh tắt máy hoặc khởi động lại đang đếm ngược | Whitelist |
+| `/shutdown [PIN]` | ⛔ Tắt máy | Đếm ngược tắt máy (yêu cầu đúng mã PIN bảo mật) | **Bắt buộc mã PIN** |
+| `/abort` | - | Hủy ngay lệnh tắt máy đang đếm ngược | Whitelist |
 | `/help` | - | Hiển thị hướng dẫn chi tiết các lệnh | Whitelist |
 
 ---

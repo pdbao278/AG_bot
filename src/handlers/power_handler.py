@@ -40,31 +40,6 @@ async def shutdown_request_handler(update: Update, context: ContextTypes.DEFAULT
 
 
 @admin_only
-async def reboot_request_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Xử lý yêu cầu khởi động lại máy kèm xác thực PIN."""
-    user_id = update.effective_user.id
-
-    if context.args:
-        pin = context.args[0].strip()
-        ok, msg = verify_pin(user_id, pin)
-        if not ok:
-            await update.message.reply_text(f"🔒 {msg}")
-            return
-
-        success, result_msg = power_service.reboot_system(delay_seconds=15)
-        await update.message.reply_text(result_msg)
-        return
-
-    await update.message.reply_text(
-        "🔒 **YÊU CẦU MÃ PIN BẢO MẬT ĐỂ KHỞI ĐỘNG LẠI**\n\n"
-        "Vui lòng gõ lệnh theo cú pháp:\n"
-        "`/reboot <mã_PIN_của_bạn>`\n\n"
-        "*(Ví dụ: `/reboot 1234`)*",
-        parse_mode="Markdown"
-    )
-
-
-@admin_only
 async def abort_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Hủy lệnh tắt máy đang đếm ngược."""
     success, msg = power_service.abort_shutdown()
