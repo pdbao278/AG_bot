@@ -187,7 +187,7 @@ def _watch_antigravity(stop_event: threading.Event) -> None:
 
     # Vòng lặp theo dõi
     while not stop_event.is_set():
-        stop_event.wait(timeout=5)
+        stop_event.wait(timeout=30)
         if stop_event.is_set():
             return
         procs = [p for p in psutil.process_iter(["name"]) if p.info["name"] and p.info["name"].lower().rstrip(".exe") in AG_PROCESS_NAMES]
