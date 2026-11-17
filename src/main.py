@@ -1,5 +1,7 @@
 import sys
+import os
 import socket
+import threading
 from pathlib import Path
 
 # Đảm bảo terminal Windows luôn hiển thị đúng tiếng Việt có dấu (UTF-8)
@@ -162,6 +164,41 @@ def create_bot_application():
     return application
 
 
+def _watch_antigravity(stop_event: threading.Event) -> None:
+    """
+    Theo dõi tiến trình Antigravity. Khi tất cả cửa sổ Antigravity đóng,
+    tự động dừng bot sau 5 giây (đủ thời gian để phân biệt restart nhanh).
+    """
+    import psutil
+
+    AG_PROCESS_NAMES = {"antigravity", "antigravity ide"}
+
+    # Chờ Antigravity khởi động lên trước (tối đa 30 giây)
+    for _ in range(30):
+        if stop_event.wait(timeout=1):
+            return
+        procs = [p for p in psutil.process_iter(["name"]) if p.info["name"] and p.info["name"].lower().rstrip(".exe") in AG_PROCESS_NAMES]
+        if procs:
+            logger.info(f"Phát hiện Antigravity đang chạy ({len(procs)} tiến trình). Bắt đầu theo dõi.")
+            break
+    else:
+        logger.info("Không tìm thấy Antigravity sau 30 giây — bot chạy độc lập, không tự tắt.")
+        return
+
+    # Vòng lặp theo dõi
+    while not stop_event.is_set():
+        stop_event.wait(timeout=5)
+        if stop_event.is_set():
+            return
+        procs = [p for p in psutil.process_iter(["name"]) if p.info["name"] and p.info["name"].lower().rstrip(".exe") in AG_PROCESS_NAMES]
+        if not procs:
+            logger.info("Antigravity đã đóng. Bot sẽ tắt sau 5 giây...")
+            stop_event.wait(timeout=5)
+            logger.info("Tắt bot theo Antigravity.")
+            os.kill(os.getpid(), 2)  # SIGINT — dừng run_polling sạch
+            return
+
+
 def main():
     """Hàm chạy chính của chương trình AG-Telebot."""
     if not ensure_single_instance():
@@ -175,6 +212,10 @@ def main():
     logger.info(f"Số lượng User ID được phép: {len(settings.ALLOWED_USER_IDS)}")
     logger.info("=========================================")
 
+    stop_event = threading.Event()
+    watcher = threading.Thread(target=_watch_antigravity, args=(stop_event,), daemon=True)
+    watcher.start()
+
     try:
         app = create_bot_application()
         logger.info("Bot đang chạy ở chế độ Long Polling an toàn. Nhấn Ctrl+C để dừng.")
@@ -185,6 +226,8 @@ def main():
     except Exception as e:
         logger.critical(f"Lỗi không xác định: {e}", exc_info=True)
         sys.exit(1)
+    finally:
+        stop_event.set()
 
 
 if __name__ == "__main__":
