@@ -1,5 +1,7 @@
 import subprocess
 import time
+import ctypes
+import threading
 import psutil
 from datetime import datetime
 from src.core.logger import logger
@@ -37,17 +39,35 @@ class PowerService:
             return {}
 
     @staticmethod
-    def lock_workstation() -> tuple[bool, str]:
-        """Khóa màn hình máy tính Windows ngay lập tức."""
+    def turn_off_monitor() -> None:
+        """Gửi lệnh tắt màn hình (ngắt tín hiệu display)."""
         try:
-            subprocess.run(["rundll32.exe", "user32.dll,LockWorkStation"], check=True)
-            return True, "🔒 Đã khóa màn hình máy tính thành công!"
+            # HWND_BROADCAST = 0xFFFF, WM_SYSCOMMAND = 0x0112, SC_MONITORPOWER = 0xF170, MONITOR_OFF = 2
+            ctypes.windll.user32.SendMessageW(0xFFFF, 0x0112, 0xF170, 2)
+        except Exception as e:
+            logger.error(f"Lỗi khi ngắt tín hiệu màn hình: {e}")
+
+    @staticmethod
+    def lock_workstation() -> tuple[bool, str]:
+        """Khóa màn hình và tắt màn hình ngay lập tức (bot vẫn chạy ngầm để nhận lệnh)."""
+        try:
+            # 1. Khóa workstation
+            ctypes.windll.user32.LockWorkStation()
+
+            # 2. Delay nhỏ rồi tắt màn hình
+            # (Tránh hiệu ứng chuyển desktop của Windows bật lại màn hình)
+            def _delayed_monitor_off():
+                time.sleep(0.5)
+                PowerService.turn_off_monitor()
+
+            threading.Thread(target=_delayed_monitor_off, daemon=True).start()
+            return True, "🔒 Đã khóa màn hình máy tính!\n*(Bot vẫn đang chạy ngầm để nhận lệnh)*"
         except Exception as e:
             logger.error(f"Lỗi khi khóa màn hình: {e}")
             return False, f"❌ Không thể khóa màn hình: {e}"
 
     @staticmethod
-    def shutdown_system(delay_seconds: int = 15) -> tuple[bool, str]:
+    def shutdown_system(delay_seconds: int = 60) -> tuple[bool, str]:
         """Tắt máy tính (có đếm ngược delay_seconds để kịp hủy nếu bấm nhầm)."""
         try:
             cmd = ["shutdown.exe", "/s", "/t", str(delay_seconds), "/c", "Yeu cau tat may tu Telegram Bot"]

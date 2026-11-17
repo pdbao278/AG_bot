@@ -238,7 +238,7 @@ async def message_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         from src.handlers.command_handler import log_handler
         context.args = []
         return await log_handler(update, context)
-    elif text == "🔒 Khóa máy" or "Khóa máy" in text:
+    elif text == "🔒 Khóa máy" or "khóa máy" in text.lower():
         from src.handlers.power_handler import lock_handler
         return await lock_handler(update, context)
     elif text == "⛔ Tắt máy" or "Tắt máy" in text:

@@ -87,12 +87,31 @@ BOT_COMMANDS = [
 
 
 async def post_init(application) -> None:
-    """Đăng ký danh sách lệnh gợi ý tự động khi người dùng gõ / trên Telegram."""
+    """Đăng ký danh sách lệnh gợi ý và thông báo online khi bot khởi động."""
     try:
         await application.bot.set_my_commands(BOT_COMMANDS)
         logger.info("Đã đăng ký danh sách lệnh gợi ý (Bot Commands) với Telegram thành công.")
     except Exception as e:
         logger.warning(f"Không thể đăng ký Bot Commands với Telegram: {e}")
+
+    # Thông báo online đến tất cả user được phép
+    from datetime import datetime
+    from src.config import settings
+    now = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+    msg = (
+        f"✅ *Bot vừa online lại!*\n"
+        f"🕐 `{now}`\n\n"
+        f"_Các lệnh gửi lúc bot offline đã bị bỏ qua._"
+    )
+    for user_id in settings.ALLOWED_USER_IDS:
+        try:
+            await application.bot.send_message(
+                chat_id=user_id,
+                text=msg,
+                parse_mode="Markdown"
+            )
+        except Exception as e:
+            logger.warning(f"Không thể gửi thông báo online đến {user_id}: {e}")
 
 
 async def global_error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -159,7 +178,7 @@ def main():
     try:
         app = create_bot_application()
         logger.info("Bot đang chạy ở chế độ Long Polling an toàn. Nhấn Ctrl+C để dừng.")
-        app.run_polling(drop_pending_updates=False)
+        app.run_polling(drop_pending_updates=True)
     except ValueError as val_err:
         logger.critical(f"Lỗi khởi động: {val_err}")
         sys.exit(1)

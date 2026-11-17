@@ -93,7 +93,7 @@ async def help_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
         f"• `/screen` — Chụp ảnh màn hình gửi về điện thoại.\n"
         f"• `/status` — Xem CPU, RAM, ổ cứng, model đang dùng.\n"
         f"• `/log` — Xem nhật ký hoạt động gần nhất (hoặc `/log file` để tải về).\n"
-        f"• `/lock` — Khóa màn hình ngay lập tức.\n"
+        f"• `/lock` — Khóa màn hình & tắt màn hình ngay (bot vẫn nhận lệnh).\n"
         f"• `/shutdown` — Tắt máy (yêu cầu xác thực mã PIN).\n"
         f"• `/abort` — Hủy lệnh tắt máy đang đếm ngược."
     )

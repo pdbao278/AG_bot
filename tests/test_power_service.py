@@ -22,6 +22,15 @@ def test_lock_workstation(mock_run):
     mock_run.assert_called_once_with(["rundll32.exe", "user32.dll,LockWorkStation"], check=True)
 
 
+@patch("ctypes.windll.user32.LockWorkStation")
+def test_sleep_system(mock_lock):
+    """Kiểm tra lệnh sleep máy tính."""
+    success, msg = power_service.sleep_system()
+    assert success is True
+    assert "Sleep" in msg
+    mock_lock.assert_called_once()
+
+
 @patch("subprocess.run")
 def test_shutdown_system(mock_run):
     """Kiểm tra lệnh tắt máy gọi đúng tham số."""

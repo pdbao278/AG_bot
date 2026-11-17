@@ -18,7 +18,8 @@ Hệ thống bot Telegram bảo mật cao giúp bạn giám sát và điều khi
    - Tự động xử lý tình huống màn hình bị khóa hoặc tắt hiển thị mà không làm gián đoạn bot.
 
 3. **Quản lý nguồn máy tính từ xa:**
-   - **Khóa máy (`/lock`):** Khóa màn hình máy tính ngay lập tức.
+   - **Khóa máy (`/lock`):** Khóa màn hình máy tính ngay lập tức (`Win + L`).
+   - **Chế độ ngủ (`/sleep`):** Khóa máy tính và tắt tín hiệu màn hình ngay lập tức (giữ máy tính, mạng và Bot chạy ngầm).
    - **Tắt máy (`/shutdown <PIN>`):** Yêu cầu nhập đúng mã PIN bảo mật cá nhân để kích hoạt đếm ngược tắt máy.
    - **Hủy lệnh (`/abort`):** Hủy lệnh tắt máy nếu đang trong thời gian đếm ngược.
 
@@ -113,6 +114,7 @@ Hiển thị cố định ngay dưới khung chat gồm 8 phím tiện lợi:
 | ⚙️ Đổi Model (+ Quota) | `/model` | Bật menu chọn model AI kèm hiển thị 🟢/🔴 Quota và nút làm mới hạn mức |
 | 📜 Xem Log | `/log` | Xem 25 dòng log mới nhất (hoặc `/log file` để tải toàn bộ file `bot.log`) |
 | 🔒 Khóa máy | `/lock` | Khóa màn hình Windows ngay lập tức (`rundll32 user32.dll,LockWorkStation`) |
+| 🌙 Sleep | `/sleep` | Khóa máy tính và ngắt tín hiệu màn hình ngay lập tức (bot vẫn chạy ngầm) |
 | ⛔ Tắt máy | `/shutdown <PIN>` | Bắt đầu đếm ngược 60 giây tắt máy tính (bắt buộc đúng mã PIN) |
 | - | `/abort` | Hủy lệnh tắt máy tính đang đếm ngược |
 | - | `/help` | Hiển thị bảng tóm tắt hướng dẫn sử dụng chi tiết |

@@ -120,13 +120,13 @@ e:\tool\AG\
 │   │   ├── command_handler.py # Xử lý /start, /menu, /help, /status, /log và Reply Keyboard
 │   │   ├── agy_handler.py     # Nhận prompt, /ask, /new, /model (quota), /cd và tin nhắn tự do
 │   │   ├── screen_handler.py  # Xử lý chụp và gửi ảnh màn hình
-│   │   └── power_handler.py   # Xử lý tắt máy (kèm mã PIN), khóa màn hình và nút hủy /abort
+│   │   └── power_handler.py   # Xử lý tắt máy (kèm mã PIN), khóa màn hình, sleep và nút hủy /abort
 │   │
 │   └── services/              # Dịch vụ hệ thống nền tảng
 │       ├── __init__.py
 │       ├── agy_service.py     # Wrapper tương tác với agy.exe CLI, quản lý session & quota cache
 │       ├── screen_service.py  # Chụp ảnh màn hình bằng mss/ImageGrab/Task Scheduler ẩn
-│       └── power_service.py   # Lệnh hệ điều hành Windows (shutdown, rundll32, lock, uptime)
+│       └── power_service.py   # Lệnh hệ điều hành Windows (shutdown, rundll32, lock, sleep, uptime)
 │
 └── tests/                     # Kiểm thử tự động (Pytest)
     ├── __init__.py
@@ -158,6 +158,7 @@ Hệ thống hỗ trợ cả **giao diện phím bấm nhanh (Reply Keyboard)** 
 | `/model` | ⚙️ Đổi Model (+ Quota) | Mở menu chọn model AI tích hợp đo hạn mức (🟢/🔴 Quota) | Whitelist |
 | `/log` hoặc `/logs` | 📜 Xem Log | Xem 25 dòng log mới nhất hoặc tải toàn bộ file (`/log file`) | Whitelist |
 | `/lock` | 🔒 Khóa máy | Khóa màn hình Windows ngay lập tức (`LockWorkStation`) | Whitelist |
+| `/sleep` | 🌙 Sleep | Khóa máy và tắt màn hình ngay (giữ bot chạy ngầm) | Whitelist |
 | `/shutdown [PIN]` | ⛔ Tắt máy | Đếm ngược tắt máy (yêu cầu đúng mã PIN bảo mật) | **Bắt buộc mã PIN** |
 | `/abort` | - | Hủy ngay lệnh tắt máy đang đếm ngược | Whitelist |
 | `/help` | - | Hiển thị hướng dẫn chi tiết các lệnh | Whitelist |

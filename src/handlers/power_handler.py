@@ -25,7 +25,7 @@ async def shutdown_request_handler(update: Update, context: ContextTypes.DEFAULT
             await update.message.reply_text(f"🔒 {msg}")
             return
 
-        success, result_msg = power_service.shutdown_system(delay_seconds=15)
+        success, result_msg = power_service.shutdown_system(delay_seconds=60)
         await update.message.reply_text(result_msg)
         return
 
